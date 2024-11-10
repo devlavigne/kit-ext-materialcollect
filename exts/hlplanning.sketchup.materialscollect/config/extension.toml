@@ -1,0 +1,31 @@
+[package]
+version = "1.0.1"
+authors = ["Houseal Lavigne Associates"]
+title = "Houseal Lavigne SketchUp Materials Collect"
+description = "An extension to collect all materials in a SketchUp usdz to place them in a Looks folder."
+readme = "docs/README.md"
+repository = ""
+category = "Window"
+keywords = ["Omniverse", "Materials", "SketchUp", "hlplanning", "Houseal Lavigne"]
+changelog = "docs/CHANGELOG.md"
+preview_image = "data/preview.png"
+icon = "data/icon.png"
+
+[dependencies]
+"omni.kit.uiapp" = {}
+"omni.ui" = {}
+"omni.kit.widget.viewport" = {}
+"omni.usd" = {}
+
+[[python.module]]
+name = "hlplanning.sketchup.materialscollect"
+module = "hlplanning_sketchup_materialscollect_extension"  # Update this to match the actual Python file
+
+[[extensions]]
+# Ensures the extension shows in the Windows menu
+window = true
+
+[ui]
+title = "Houseal Lavigne Find and Replace"    # Title in the Windows menu
+width = 300                                   # Default window width
+height = 400                                  # Default window height
