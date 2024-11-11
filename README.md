@@ -52,7 +52,7 @@ Installation
 
 ### Steps
 
-1.  bashCopy codegit clone https://github.com/yourusername/MoveMaterialsToLooks.git
+1.  bashCopy codegit clone https://github.com/devlavigne/kit-ext-materialcollect.git
     
 2.  Copy the MoveMaterialsToLooks extension folder into your Omniverse extensions directory. The default user extensions directory is usually located at:
     
@@ -97,17 +97,10 @@ Usage
     *   Ensure that all objects still display the correct materials.
         
 
-Code Overview
--------------
-
-Below is the main code for the extension, formatted for clarity:
-
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   pythonCopy codeimport omni.ext  import omni.ui as ui  from pxr import Usd, UsdShade, Sdf  import omni.usd  import omni.kit.commands  class MoveMaterialsToLooksExtension(omni.ext.IExt):      def on_startup(self, ext_id):          # Called when the extension is enabled          print("[MoveMaterialsToLooks] Extension starting up")          # Create a UI window for the extension          self._window = ui.Window("Move Materials to /Looks", width=300, height=100)          with self._window.frame:              with ui.VStack():                  # Add a label and a button to the UI                  ui.Label("Move all materials to the /Looks folder.", alignment=ui.Alignment.CENTER)                  ui.Button("Execute", clicked_fn=self._on_execute_button_click)      def on_shutdown(self):          # Called when the extension is disabled          print("[MoveMaterialsToLooks] Extension shutting down")          if self._window:              # Destroy the UI window              self._window.destroy()              self._window = None      def _on_execute_button_click(self):          # Called when the "Execute" button is clicked          self.move_materials_to_looks()      def move_materials_to_looks(self):          # Get the current USD stage          stage = omni.usd.get_context().get_stage()          if not stage:              print("No stage is open.")              return          # Define the /Looks folder if it doesn't exist          looks_path = Sdf.Path('/Looks')          if not stage.GetPrimAtPath(looks_path):              stage.DefinePrim(looks_path, 'Scope')  # You can use 'Xform' if preferred          # Collect all materials not already in /Looks          materials_to_move = []          for prim in stage.Traverse():              if prim.IsA(UsdShade.Material):                  material_path = prim.GetPath()                  if not material_path.HasPrefix(looks_path):                      materials_to_move.append(prim)          # Move each material and update bindings          for material_prim in materials_to_move:              material_path = material_prim.GetPath()              material_name = material_path.name              # Handle name conflicts in /Looks              new_material_name = material_name              new_material_path = looks_path.AppendChild(new_material_name)              index = 1              while stage.GetPrimAtPath(new_material_path):                  new_material_name = f"{material_name}_{index}"                  new_material_path = looks_path.AppendChild(new_material_name)                  index += 1              # Move the material              result = omni.kit.commands.execute('MovePrim',                                                 path_from=str(material_path),                                                 path_to=str(new_material_path))              if not result:                  print(f"Failed to move material {material_path} to {new_material_path}")                  continue              # Update material bindings              for prim in stage.Traverse():                  binding_api = UsdShade.MaterialBindingAPI(prim)                  bound_material = binding_api.GetDirectBinding().GetMaterial()                  if bound_material and bound_material.GetPath() == material_path:                      binding_api.Bind(UsdShade.Material(stage.GetPrimAtPath(new_material_path)))          print("Materials have been moved to the /Looks folder.")   `
-
 Contributing
 ------------
 
-Contributions are welcome! If you have suggestions for improvements or encounter any issues, please open an [issue](https://github.com/yourusername/MoveMaterialsToLooks/issues) or submit a pull request.
+Contributions are welcome! If you have suggestions for improvements or encounter any issues, please open an [issue](https://github.com/devlavigne/kit-ext-materialcollect/issues) or submit a pull request.
 
 ### Steps to Contribute
 
@@ -139,10 +132,7 @@ Co-founder of [Houseal Lavigne](https://www.hlplanning.com/), an award-winning p
 Connect with me:
 
 *   [LinkedIn](https://www.linkedin.com/in/devinlavigne)
-    
-*   [Personal Website](https://www.devinlavigne.com/)
+
     
 
 **Disclaimer:** This extension is provided "as is" without warranty of any kind. Use it at your own risk, and always back up your data before running scripts that modify your scenes.
-
-**Note:** Replace https://github.com/yourusername/MoveMaterialsToLooks.git and other placeholder URLs with your actual GitHub repository links.
